@@ -268,4 +268,36 @@ class Data extends MY_Controller
         $this->session->set_flashdata('message', 'Produk berhasil diperbarui!');
         return redirect()->back();
     }
+
+    public function delete_produk()
+    {
+        try {
+            $id_produk = $this->input->post('id_produk');
+
+            if (empty($id_produk)) {
+                throw new Exception("ID produk tidak valid.");
+            }
+
+            $produk = $this->db->get_where('produk', ['id_produk' => $id_produk])->row();
+            if (!$produk) {
+                throw new Exception("Produk tidak ditemukan.");
+            }
+
+            $this->db->where('id_produk', $id_produk);
+            $this->db->delete('produk');
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Produk berhasil dihapus!',
+                'code' => 200
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'code' => 500
+            ]);
+        }
+    }
+
 }
