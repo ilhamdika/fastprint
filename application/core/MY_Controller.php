@@ -8,14 +8,15 @@ class MY_Controller extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->data['title'] = 'My Website';
         $this->load->database();
         $this->load->library('session');
     }
 
-    protected function load_view($view, $data = [])
+    protected function load_view($view, $data = [], $title = 'Fastprint')
     {
         $this->data = array_merge($this->data, $data);
+        $this->data['title'] = $title;
+
         $this->load->view('layouts/main', $this->data + ['content' => $view]);
     }
 }

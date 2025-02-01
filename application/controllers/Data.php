@@ -6,30 +6,33 @@ class Data extends MY_Controller
     public function bisa_dijual()
     {
         $kategori = $this->db->select('*')->from('kategori')->get()->result();
+        $title = 'Produk Bisa Dijual';
 
         $this->load_view('produk/bisa_dijual', [
             'kategori' => $kategori
-        ]);
+        ], $title);
     }
 
     public function tidak_bisa_dijual()
     {
         $kategori = $this->db->select('*')->from('kategori')->get()->result();
+        $title = 'Produk Tidak Bisa Dijual';
 
         $this->load_view('produk/tidak_bisa_dijual', [
             'kategori' => $kategori
-        ]);
+        ], $title);
     }
 
     public function add_produk()
     {
         $kategori = $this->db->select('*')->from('kategori')->get()->result();
         $status = $this->db->select('*')->from('status')->get()->result();
+        $title = 'Tambah Produk';
 
         $this->load_view('produk/add_produk', [
             'kategori' => $kategori,
             'status' => $status
-        ]);
+        ], $title);
     }
 
     public function add_product_action()
@@ -230,12 +233,13 @@ class Data extends MY_Controller
 
         $kategori = $this->db->select('*')->from('kategori')->get()->result();
         $status = $this->db->select('*')->from('status')->get()->result();
+        $title = 'Edit Produk ' . $produk->nama_produk;
 
         $this->load_view('produk/edit_produk', [
             'produk' => $produk,
             'kategori' => $kategori,
             'status' => $status
-        ]);
+        ], $title);
     }
 
     public function update_produk_action($id_produk)
