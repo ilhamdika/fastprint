@@ -41,9 +41,9 @@ class Data extends MY_Controller
 
         $this->session->set_flashdata('message', 'Produk dengan nama ' . $data['nama_produk'] . ' berhasil ditambahkan!');
         if ($status_id == 1) {
-            return redirect('data/bisa_dijual');
+            return redirect(base_url(''));
         } else {
-            return redirect('data/tidak_bisa_dijual');
+            return redirect(base_url('data/tidak_bisa_dijual'));
         }
     }
 
