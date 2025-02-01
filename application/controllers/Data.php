@@ -152,4 +152,55 @@ class Data extends MY_Controller
         ]);
     }
 
+    public function edit_produk($id)
+    {
+        $this->db->select('produk.*, kategori.nama_kategori, status.nama_status');
+        $this->db->from('produk');
+        $this->db->join('kategori', 'produk.kategori_id = kategori.id_kategori');
+        $this->db->join('status', 'produk.status_id = status.id_status');
+        $this->db->where('produk.id_produk', $id);
+        $query = $this->db->get();
+
+        $produk = $query->row();
+
+        $kategori = $this->db->select('*')->from('kategori')->get()->result();
+        $status = $this->db->select('*')->from('status')->get()->result();
+
+        $this->load_view('produk/edit_produk', [
+            'produk' => $produk,
+            'kategori' => $kategori,
+            'status' => $status
+        ]);
+    }
+
+    public function update_produk_action($id_produk)
+    {
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
+        $this->form_validation->set_rules('kategori_id', 'Kategori', 'required');
+        $this->form_validation->set_rules('status_id', 'Status Produk', 'required');
+        $this->form_validation->set_rules('harga', 'Harga', 'required|numeric');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->session->set_flashdata('error', validation_errors());
+            return redirect()->back();
+        }
+
+        $nama_produk = $this->input->post('nama_produk');
+        $kategori_id = $this->input->post('kategori_id');
+        $status_id = $this->input->post('status_id');
+        $harga = $this->input->post('harga');
+
+        $this->db->where('id_produk', $id_produk);
+        $this->db->update('produk', [
+            'nama_produk' => $nama_produk,
+            'kategori_id' => $kategori_id,
+            'status_id' => $status_id,
+            'harga' => $harga
+        ]);
+
+        $this->session->set_flashdata('message', 'Produk berhasil diperbarui!');
+        return redirect()->back();
+    }
 }
