@@ -3,6 +3,50 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Data extends MY_Controller
 {
+    public function bisa_dijual()
+    {
+        $kategori = $this->db->select('*')->from('kategori')->get()->result();
+
+        $this->load_view('produk/bisa_dijual', [
+            'kategori' => $kategori
+        ]);
+    }
+
+    public function tidak_bisa_dijual()
+    {
+        $kategori = $this->db->select('*')->from('kategori')->get()->result();
+
+        $this->load_view('produk/tidak_bisa_dijual', [
+            'kategori' => $kategori
+        ]);
+    }
+
+    public function add_produk()
+    {
+        $kategori = $this->db->select('*')->from('kategori')->get()->result();
+        $status = $this->db->select('*')->from('status')->get()->result();
+
+        $this->load_view('produk/add_produk', [
+            'kategori' => $kategori,
+            'status' => $status
+        ]);
+    }
+
+    public function add_product_action()
+    {
+        $data = $this->input->post();
+        $status_id = $this->input->post('status_id');
+
+        $this->db->insert('produk', $data);
+
+        $this->session->set_flashdata('message', 'Produk dengan nama ' . $data['nama_produk'] . ' berhasil ditambahkan!');
+        if ($status_id == 1) {
+            return redirect('data/bisa_dijual');
+        } else {
+            return redirect('data/tidak_bisa_dijual');
+        }
+    }
+
     public function hit_api()
     {
         $username = $this->get_username_from_header();
@@ -122,12 +166,10 @@ class Data extends MY_Controller
     {
         $status = $this->input->post('status');
         $kategori = $this->input->post('kategori');
-
-        // echo json_encode([
-        //     'status' => $status,
-        //     'kategori' => $kategori,
-        // ]);
-        // die();
+        $search = $this->input->post('search');
+        $per_page = 10;
+        $page = $this->input->post('page') ?? 1;
+        $offset = ($page - 1) * $per_page;
 
         $this->db->select('produk.*, kategori.nama_kategori, status.nama_status');
         $this->db->from('produk');
@@ -142,13 +184,36 @@ class Data extends MY_Controller
             $this->db->where('produk.kategori_id', $kategori);
         }
 
-        $query = $this->db->get();
+        if ($search) {
+            $this->db->like('produk.nama_produk', $search);
+        }
 
-        // echo json_encode($query->result());
+        $this->db->limit($per_page, $offset);
+
+        $query = $this->db->get();
+        $produk = $query->result();
+
+        $this->db->select('count(*) as total');
+        $this->db->from('produk');
+        if ($status) {
+            $this->db->where('produk.status_id', $status);
+        }
+        if ($kategori) {
+            $this->db->where('produk.kategori_id', $kategori);
+        }
+        if ($search) {
+            $this->db->like('produk.nama_produk', $search);
+        }
+
+        $count_query = $this->db->get();
+        $total_rows = $count_query->row()->total;
+        $total_pages = ceil($total_rows / $per_page);
+
         echo json_encode([
             'status' => 'success',
-            'total' => $query->num_rows(),
-            'produk' => $query->result()
+            'produk' => $produk,
+            'total_pages' => $total_pages,
+            'current_page' => $page
         ]);
     }
 
