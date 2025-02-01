@@ -9,6 +9,7 @@ class MY_Controller extends CI_Controller
     {
         parent::__construct();
         $this->data['title'] = 'My Website';
+        $this->load->database();
     }
 
     protected function load_view($view, $data = [])
