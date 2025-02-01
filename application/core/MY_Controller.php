@@ -10,6 +10,7 @@ class MY_Controller extends CI_Controller
         parent::__construct();
         $this->data['title'] = 'My Website';
         $this->load->database();
+        $this->load->library('session');
     }
 
     protected function load_view($view, $data = [])
