@@ -1,14 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Data extends CI_Controller
+class Data extends MY_Controller
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->load->database();
-    }
     public function hit_api()
     {
         $username = $this->get_username_from_header();
@@ -124,5 +118,38 @@ class Data extends CI_Controller
     }
 
 
+    public function list_produk()
+    {
+        $status = $this->input->post('status');
+        $kategori = $this->input->post('kategori');
+
+        // echo json_encode([
+        //     'status' => $status,
+        //     'kategori' => $kategori,
+        // ]);
+        // die();
+
+        $this->db->select('produk.*, kategori.nama_kategori, status.nama_status');
+        $this->db->from('produk');
+        $this->db->join('kategori', 'produk.kategori_id = kategori.id_kategori');
+        $this->db->join('status', 'produk.status_id = status.id_status');
+
+        if ($status) {
+            $this->db->where('produk.status_id', $status);
+        }
+
+        if ($kategori) {
+            $this->db->where('produk.kategori_id', $kategori);
+        }
+
+        $query = $this->db->get();
+
+        // echo json_encode($query->result());
+        echo json_encode([
+            'status' => 'success',
+            'total' => $query->num_rows(),
+            'produk' => $query->result()
+        ]);
+    }
 
 }
