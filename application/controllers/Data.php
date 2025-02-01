@@ -3,13 +3,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Data extends CI_Controller
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->database();
+    }
     public function hit_api()
     {
         $username = $this->get_username_from_header();
 
-
         $password = $this->create_password();
-
 
         $data = [
             'username' => $username,
@@ -20,10 +24,55 @@ class Data extends CI_Controller
 
         $response = $this->send_post_request($url, $data);
 
-        echo json_encode($response);
+        $data = $response['data'];
+
+        $kategori = [];
+        $status = [];
+        $produk = [];
+        foreach ($data as $item) {
+            $kategori[] = $item['kategori'];
+            $status[] = $item['status'];
+            $produk[] = $item;
+        }
+
+        $kategori = array_unique($kategori);
+        $status = array_unique($status);
+        foreach ($kategori as $kat) {
+            $query = $this->db->get_where('kategori', ['nama_kategori' => $kat]);
+            if ($query->num_rows() == 0) {
+                $this->db->insert('kategori', ['nama_kategori' => $kat]);
+            }
+        }
+
+        foreach ($status as $stat) {
+            $query = $this->db->get_where('status', ['nama_status' => $stat]);
+            if ($query->num_rows() == 0) {
+                $this->db->insert('status', ['nama_status' => $stat]);
+            }
+        }
+
+        foreach ($produk as $prod) {
+            $existing_product = $this->db->get_where('produk', ['id_produk' => $prod['id_produk']])->row();
+
+            if (!$existing_product) {
+                $kategori_id = $this->db->get_where('kategori', ['nama_kategori' => $prod['kategori']])->row()->id_kategori;
+                $status_id = $this->db->get_where('status', ['nama_status' => $prod['status']])->row()->id_status;
+
+                $this->db->insert('produk', [
+                    'id_produk' => $prod['id_produk'],
+                    'nama_produk' => $prod['nama_produk'],
+                    'harga' => $prod['harga'],
+                    'kategori_id' => $kategori_id,
+                    'status_id' => $status_id
+                ]);
+            }
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Data berhasil disimpan'
+        ]);
     }
-
-
 
     private function get_username_from_header()
     {
@@ -38,8 +87,6 @@ class Data extends CI_Controller
         return isset($matches[1]) ? $matches[1] : '';
     }
 
-
-
     private function create_password()
     {
         $date = new DateTime();
@@ -48,11 +95,9 @@ class Data extends CI_Controller
         $year = $date->format('y');
         $password = "bisacoding-{$day}-{$month}-{$year}";
 
-        echo 'Password: ' . md5($password);
+        // echo 'Password: ' . md5($password);
         return md5($password);
     }
-
-
 
     private function send_post_request($url, $data)
     {
