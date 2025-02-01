@@ -1,71 +1,97 @@
-###################
-What is CodeIgniter
-###################
+# CodeIgniter 3 - Panduan Instalasi dan Menjalankan Aplikasi
 
-CodeIgniter is an Application Development Framework - a toolkit - for people
-who build web sites using PHP. Its goal is to enable you to develop projects
-much faster than you could if you were writing code from scratch, by providing
-a rich set of libraries for commonly needed tasks, as well as a simple
-interface and logical structure to access these libraries. CodeIgniter lets
-you creatively focus on your project by minimizing the amount of code needed
-for a given task.
+## Persyaratan Sistem
+Sebelum menjalankan aplikasi, pastikan server Anda memenuhi persyaratan berikut:
+- PHP versi 7.2 atau lebih tinggi
+- Database MySQL/MariaDB
+- Apache/Nginx dengan mod_rewrite diaktifkan
+- Composer (opsional, untuk mengelola dependensi tambahan)
 
-*******************
-Release Information
-*******************
+## 1. Clone atau Unduh Project
+Jika Anda menggunakan Git, clone repository dengan perintah:
+```sh
+https://github.com/ilhamdika/fastprint.git
+cd repository
+```
 
-This repo contains in-development code for future releases. To download the
-latest stable release please visit the `CodeIgniter Downloads
-<https://codeigniter.com/download>`_ page.
+Jika Anda mengunduh secara manual, ekstrak file ke direktori server Anda.
 
-**************************
-Changelog and New Features
-**************************
+## 2. Konfigurasi CodeIgniter
+### a. Konfigurasi Base URL
+Buka file `application/config/config.php` dan ubah bagian berikut sesuai dengan URL aplikasi Anda:
+```php
+$config['base_url'] = 'http://localhost/fastprint/';
+atau bisa disesuaikan dengan nama yang anda berikan
+```
 
-You can find a list of all changes for each release in the `user
-guide change log <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/changelog.rst>`_.
+### b. Konfigurasi Database
+Buka file `application/config/database.php` dan sesuaikan dengan kredensial database Anda:
+```php
+$db['default'] = array(
+    'dsn'    => '',
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => '',
+    'database' => 'produk',
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+);
+```
 
-*******************
-Server Requirements
-*******************
+## 3. Import Database
+Sebelum menjalankan aplikasi, Anda harus mengimpor database dari file `produk.sql`. Ikuti langkah-langkah berikut:
 
-PHP version 5.6 or newer is recommended.
+### a. Melalui phpMyAdmin
+1. Buka phpMyAdmin: `http://localhost/phpmyadmin`
+2. Buat database baru dengan nama `produk`
+3. Pilih database `produk`, lalu klik **Import**
+4. Pilih file `produk.sql` dan klik **Go**
 
-It should work on 5.3.7 as well, but we strongly advise you NOT to run
-such old versions of PHP, because of potential security and performance
-issues, as well as missing features.
+### b. Melalui Terminal (Command Line)
+Jika menggunakan terminal, jalankan perintah berikut:
+```sh
+mysql -u root -p produk < produk.sql
+```
+Masukkan password MySQL Anda jika diminta.
 
-************
-Installation
-************
+## 4. Menjalankan Aplikasi
+Jika menggunakan **XAMPP**, letakkan project di folder `htdocs/`, lalu akses melalui browser:
+```
+http://localhost/fastprint/
+```
 
-Please see the `installation section <https://codeigniter.com/userguide3/installation/index.html>`_
-of the CodeIgniter User Guide.
+Jika menggunakan **Built-in PHP Server**, jalankan perintah berikut dari direktori project:
+```sh
+php -S localhost:8000
+```
+Kemudian akses aplikasi di:
+```
+http://localhost:8000/
+```
 
-*******
-License
-*******
+## 6. Troubleshooting
+### a. Halaman 404 (Controller Not Found)
+- Pastikan nama file controller diawali dengan huruf besar (misalnya: `Home.php` bukan `home.php`).
+- Pastikan method dalam controller bersifat **public**.
+- Pastikan URL yang diakses sesuai dengan routing yang ada di `application/config/routes.php`.
 
-Please see the `license
-agreement <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/license.rst>`_.
+### b. Database Tidak Ditemukan
+- Pastikan Anda sudah mengimpor file `produk.sql`.
+- Pastikan konfigurasi database di `application/config/database.php` benar.
+- Jika menggunakan MySQL di XAMPP, pastikan Apache dan MySQL sudah berjalan.
 
-*********
-Resources
-*********
+### c. Gagal Redirect atau Base URL Salah
+- Pastikan `base_url` di `application/config/config.php` sudah sesuai dengan domain atau localhost.
+- Jika tidak ingin menggunakan `index.php` di URL, buat file `.htaccess` di root project:
+  ```apache
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php/$1 [L]
+  ```
 
--  `User Guide <https://codeigniter.com/docs>`_
--  `Contributing Guide <https://github.com/bcit-ci/CodeIgniter/blob/develop/contributing.md>`_
--  `Language File Translations <https://github.com/bcit-ci/codeigniter3-translations>`_
--  `Community Forums <http://forum.codeigniter.com/>`_
--  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
--  `Community Slack Channel <https://codeigniterchat.slack.com>`_
-
-Report security issues to our `Security Panel <mailto:security@codeigniter.com>`_
-or via our `page on HackerOne <https://hackerone.com/codeigniter>`_, thank you.
-
-***************
-Acknowledgement
-***************
-
-The CodeIgniter team would like to thank EllisLab, all the
-contributors to the CodeIgniter project and you, the CodeIgniter user.
