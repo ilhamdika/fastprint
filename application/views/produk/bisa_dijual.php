@@ -51,12 +51,14 @@
                 $('#produkTableBody').empty();
 
                 produk.forEach(function (item, index) {
+                    var hargaRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.harga);
+                    var statusBadge = '<span class="badge bg-success">' + item.nama_status + '</span>';
                     var row = `<tr>
                         <td>${index + 1}</td>
                         <td>${item.nama_produk}</td>
-                        <td>${item.harga}</td>
+                        <td>${hargaRupiah}</td>
                         <td>${item.nama_kategori}</td>
-                        <td>${item.nama_status}</td>
+                        <td>${statusBadge}</td>
                         <td>
                             <a href="<?= base_url('data/edit_produk/') ?>${item.id_produk}" class="btn btn-primary">Edit</a>
                             <a href="<?= base_url('data/delete_produk/') ?>${item.id_produk}" class="btn btn-danger">Hapus</a>
