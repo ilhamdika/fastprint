@@ -44,7 +44,7 @@
                 <?php endforeach; ?>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-lg-6">
             <input type="text" class="form-control" id="search" placeholder="Cari produk..." onkeyup="cari()">
         </div>
         <div class="col-md-3" id="loadingSearch" style="display: none;">
@@ -53,20 +53,22 @@
     </div>
 
     <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Nama Produk</th>
-                    <th scope="col">Harga</th>
-                    <th scope="col">Kategori Produk</th>
-                    <th scope="col">Status Produk</th>
-                    <th scope="col">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="produkTableBody">
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Nama Produk</th>
+                        <th scope="col">Harga</th>
+                        <th scope="col">Kategori Produk</th>
+                        <th scope="col">Status Produk</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="produkTableBody">
+                </tbody>
+            </table>
+        </div>
 
         <nav aria-label="Page navigation">
             <ul class="pagination" id="pagination">
