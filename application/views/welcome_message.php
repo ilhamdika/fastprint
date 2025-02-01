@@ -5,9 +5,8 @@
 
 	function landing() {
 		$.ajax({
-			url: '<?= base_url('index.php/Welcome/landing'); ?>',
-			type: 'POST',
-			data: {},
+			url: '<?= base_url('data/get_data'); ?>',
+			type: 'GET',
 			success: function (data) {
 				console.log(data);
 			}
